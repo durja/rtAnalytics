@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "userProfileInputModel",
+	"required": ["distinct_id", "first_name", "last_name", "email_address"],
+	"type": "object",
+	"properties": {
+		"distinct_id": { "type": "string" },
+		"first_name": { "type": "string", "minLength": 1 },
+		"last_name": { "type": "string", "minLength": 1 },
+		"email_address": { "type": "string" }
+	}
+}

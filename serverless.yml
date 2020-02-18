@@ -1,6 +1,6 @@
 ---
 
-service: bst
+service: corona
 
 package:
   individually: true
@@ -15,11 +15,131 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: us-east-1
-  # To load environment variables externally
-  # rename env.example to .env and uncomment
-  # the following line. Also, make sure to not
-  # commit your .env.
-  #
-  #environment:
-  #  sampleEnvVar: ${env:SAMPLE_ENV_VAR}  
+  apiGateway:
+    apiKeySourceType: HEADER
+  environment:
+    analyticsStream: ${self:service}-analyticsevents-${self:custom.stage}
+    analyticsBucket: ${self:service}-analyticsevents-${self:custom.stage}
+    firehoseStreamName: ${self:service}-firehose-${self:custom.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - kinesis:PutRecords         
+        - kinesis:PutRecord
+      Resource: 
+        - !GetAtt AnalyticsStream.Arn
+ 
+custom:
+  stage: ${opt:stage, self:provider.stage}    
 
+resources:
+
+  Resources:
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.analyticsBucket}
+        VersioningConfiguration:
+          Status: Enabled
+
+    FirehoseRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: ''
+              Effect: Allow
+              Principal:
+                Service: firehose.amazonaws.com
+              Action: 'sts:AssumeRole'
+              Condition:
+                StringEquals:
+                  'sts:ExternalId': !Ref 'AWS::AccountId'
+              
+    AnalyticsS3Policy:
+      Type: AWS::IAM::Policy
+      Properties:
+        PolicyName: 'FirehoseS3Policy'
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:AbortMultipartUpload'
+                - 's3:GetBucketLocation'
+                - 's3:GetObject'
+                - 's3:ListBucket'
+                - 's3:ListBucketMultipartUploads'
+                - 's3:PutObject'
+              Resource:
+                - !GetAtt S3Bucket.Arn
+                - !Sub 'arn:aws:s3:::${self:provider.environment.analyticsBucket}*'
+
+        Roles:
+          - !Ref FirehoseRole
+
+    KinesisPolicy:
+      Type: AWS::IAM::Policy
+      Properties:
+        PolicyName: 'FirehoseKinesisPolicy'
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 
+                - 'kinesis:Get*'
+                - 'kinesis:DescribeStream'
+              Resource:
+                - !GetAtt AnalyticsStream.Arn
+        Roles:
+          - !Ref FirehoseRole
+
+    AnalyticsStream:
+      Type: AWS::Kinesis::Stream
+      Properties: 
+        Name: ${self:provider.environment.analyticsStream}
+        ShardCount: 1
+
+    DeliveryStream:
+      Type: AWS::KinesisFirehose::DeliveryStream
+      Properties:
+        DeliveryStreamName: ${self:provider.environment.firehoseStreamName}
+        DeliveryStreamType: KinesisStreamAsSource
+        KinesisStreamSourceConfiguration:
+          KinesisStreamARN: !GetAtt AnalyticsStream.Arn
+          RoleARN: !GetAtt FirehoseRole.Arn
+        S3DestinationConfiguration:
+          BucketARN: !GetAtt S3Bucket.Arn
+          BufferingHints:
+            IntervalInSeconds: 60
+            SizeInMBs: 50
+          CompressionFormat: UNCOMPRESSED
+          Prefix: analytics/
+          RoleARN: !GetAtt FirehoseRole.Arn
+      DependsOn:
+          - KinesisPolicy
+          - AnalyticsS3Policy
+
+
+functions:
+  analytics:
+    handler: analytics.handler
+    events:
+      - http:
+          path: track
+          method: post
+          cors: true
+          request:
+            schema:
+              application/json: ${file(./models/analyticsReqModel.json)}
+  postuserprofile:
+    handler: userprofile.handler
+    events:
+      - http:
+          path: userprofile
+          method: post
+          cors: true
+          request:
+            schema:
+              application/json: ${file(./models/userProfileReqModel.json)}

@@ -1,0 +1,39 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"title": "AnalyticsEventStreamModel",
+	"type": "object",
+	"properties": {
+		"events": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/event"
+			},
+			"maxItems": 100,
+			"minItems": 1
+		}
+	},
+	"required": ["events"],
+	"definitions": {
+		"event": {
+			"type": "object",
+			"properties": {
+				"event": { "type": "string" },
+				"distinct_id": { "type": "string" },
+				"category": { "type": "string" },
+				"group": { "type": "string" },
+				"url": { "type": "string" },
+				"action": { "type": "string" },
+				"result": { "type": "string" }
+			},
+			"required": [
+				"event",
+				"distinct_id",
+				"category",
+				"group",
+				"url",
+				"action",
+				"result"
+			]
+		}
+	}
+}

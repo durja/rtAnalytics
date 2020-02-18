@@ -1,0 +1,15 @@
+Resources:
+  AnalyticsStream:
+    Type: AWS::Kinesis::Stream
+    Properties: 
+      Name: ${self:provider.environment.analyticsStream}
+      ShardCount: 1
+      
+Outputs:
+  AnalyticsStreamoutput:
+    Description: The kinesis stream for analytics events
+    Value: !GetAtt AnalyticsStream.Arn
+    Export:
+      Name: AnalyticsStreamArn
+
+

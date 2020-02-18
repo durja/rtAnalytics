@@ -1,0 +1,38 @@
+Resources:
+  AnalyticsS3Policy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: 'FirehoseS3Policy'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:AbortMultipartUpload'
+              - 's3:GetBucketLocation'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+              - 's3:ListBucketMultipartUploads'
+              - 's3:PutObject'
+            Resource:
+              - !GetAtt S3Bucket.Arn
+              - !Sub 'arn:aws:s3:::${self:provider.environment.analyticsBucket}*'
+
+    Roles:
+      - !Ref FirehoseRole
+
+  KinesisPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: 'FirehoseKinesisPolicy'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: 
+              - 'kinesis:Get*'
+              - 'kinesis:DescribeStream'
+            Resource:
+              - !GetAtt AnalyticsStream.Arn
+      Roles:
+        - !Ref FirehoseRole
