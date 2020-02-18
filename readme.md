@@ -1,4 +1,4 @@
-# Serverless starter project 
+# Corona project 
 
 
 Installation: 
@@ -6,8 +6,8 @@ Installation:
 
 ```bash
 
-$ git clone https://github.com/durja/serverless-starter.git
-$ cd serverless-starter
+$ git clone https://github.com/durja/corona.git
+$ cd corona
 $ npm install 
 
 ```
