@@ -1,9 +1,9 @@
 import { success } from './response';
 
-export async function handler(event) {
-	console.log(event);
+export default async function handler(event) {
+  console.log(event);
 
-	return success({
-		message: event
-	});
+  return success({
+    message: event
+  });
 }
