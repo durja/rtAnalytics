@@ -1,10 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import AWS from 'aws-sdk';
-import { success, failure } from './response';
+import { success, failure } from '../../response';
 
 const kinesis = new AWS.Kinesis({ apiVersion: '2013-12-02' });
 
-export default async function handler(event) {
+// eslint-disable-next-line import/prefer-default-export
+export async function handler(event) {
   let data;
 
   try {

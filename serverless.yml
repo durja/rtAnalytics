@@ -1,6 +1,6 @@
 ---
 
-service: corona
+service: rt-analytics
 
 package:
   individually: true
@@ -21,6 +21,8 @@ provider:
     analyticsStream: ${self:service}-analyticsevents-${self:custom.stage}
     analyticsBucket: ${self:service}-analyticsevents-${self:custom.stage}
     firehoseStreamName: ${self:service}-firehose-${self:custom.stage}
+    userprofileStream: ${self:service}-userprofileEvents-${self:custom.stage}
+    tableName: analytics
   iamRoleStatements:
     - Effect: Allow
       Action: 
@@ -28,6 +30,18 @@ provider:
         - kinesis:PutRecord
       Resource: 
         - !GetAtt AnalyticsStream.Arn
+        - !GetAtt UserProfileStream.Arn
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - 'arn:aws:dynamodb:us-east-1:798829113315:table/analytics'
  
 custom:
   stage: ${opt:stage, self:provider.stage}    
@@ -100,6 +114,12 @@ resources:
       Properties: 
         Name: ${self:provider.environment.analyticsStream}
         ShardCount: 1
+      
+    UserProfileStream:
+      Type: AWS::Kinesis::Stream
+      Properties: 
+        Name: ${self:provider.environment.userprofileStream}
+        ShardCount: 1
 
     DeliveryStream:
       Type: AWS::KinesisFirehose::DeliveryStream
@@ -124,7 +144,7 @@ resources:
 
 functions:
   analytics:
-    handler: analytics.handler
+    handler: ./services/analytics/analytics.handler
     events:
       - http:
           path: track
@@ -133,13 +153,33 @@ functions:
           request:
             schema:
               application/json: ${file(./models/analyticsReqModel.json)}
-  postuserprofile:
-    handler: userprofile.handler
+
+  engage:
+    handler: ./services/analytics/engage.handler
     events:
       - http:
-          path: userprofile
+          path: engage
           method: post
           cors: true
+          authorizer: aws_iam
           request:
             schema:
               application/json: ${file(./models/userProfileReqModel.json)}
+
+  saveUserProfile:
+    handler: ./services/userprofile/save.handler
+    events:
+      - stream:
+          type: kinesis
+          arn: !GetAtt UserProfileStream.Arn
+          startingPosition: LATEST
+          batchWindow: 300
+          batchSize: 3
+  
+  getUserProfile:
+    handler: ./services/userprofile/get.handler
+    events:
+      - http:
+          method: get
+          path: users/{id}
+          cors: true
