@@ -1,4 +1,4 @@
-# Corona project 
+# Serverless Real-time analytics  
 
 
 Installation: 
