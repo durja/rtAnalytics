@@ -6,8 +6,8 @@ Installation:
 
 ```bash
 
-$ git clone https://github.com/durja/corona.git
-$ cd corona
+$ git clone https://github.com/durja/rtAnalytics.git
+$ cd rtAnalytics
 $ npm install 
 
 ```
