@@ -9,3 +9,6 @@ package-lock.json
 
 # IDE directories
 .vscode
+
+#Private directories
+private

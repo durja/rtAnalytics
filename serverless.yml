@@ -15,14 +15,12 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: us-east-1
-  apiGateway:
-    apiKeySourceType: HEADER
   environment:
     analyticsStream: ${self:service}-analyticsevents-${self:custom.stage}
     analyticsBucket: ${self:service}-analyticsevents-${self:custom.stage}
     firehoseStreamName: ${self:service}-firehose-${self:custom.stage}
     userprofileStream: ${self:service}-userprofileEvents-${self:custom.stage}
-    tableName: analytics
+    tableName: ${self:service}-userprofile-${self:custom.stage}
   iamRoleStatements:
     - Effect: Allow
       Action: 
@@ -41,7 +39,7 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - 'arn:aws:dynamodb:us-east-1:798829113315:table/analytics'
+        - !GetAtt DynamoDB.Arn
  
 custom:
   stage: ${opt:stage, self:provider.stage}    
@@ -49,6 +47,23 @@ custom:
 resources:
 
   Resources:
+    DynamoDB:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.tableName}
+        AttributeDefinitions:
+          - AttributeName: appId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: appId
+            KeyType: HASH
+          - AttributeName: userId
+            KeyType: RANGE
+
+
     S3Bucket:
       Type: AWS::S3::Bucket
       Properties:
@@ -143,13 +158,14 @@ resources:
 
 
 functions:
-  analytics:
+  track:
     handler: ./services/analytics/analytics.handler
     events:
       - http:
           path: track
           method: post
           cors: true
+          authorizer: aws_iam
           request:
             schema:
               application/json: ${file(./models/analyticsReqModel.json)}

@@ -4,6 +4,7 @@ import * as dynamoDB from '../../libs/DynamoDB';
 
 // eslint-disable-next-line import/prefer-default-export
 export async function handler(event) {
+  console.log('save triggered');
   await Promise.all(event.Records.map(async (record) => {
     const data = JSON.parse(Buffer.from(record.kinesis.data, 'base64').toString('ascii'));
 
@@ -19,8 +20,6 @@ export async function handler(event) {
         ':u': data.distinct_id
       }
     };
-
-    console.log(params);
 
     try {
       const result = await dynamoDB.call('query', params);

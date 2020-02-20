@@ -8,6 +8,7 @@ const kinesis = new AWS.Kinesis();
 
 // eslint-disable-next-line import/prefer-default-export
 export async function handler(event) {
+  console.log(event);
   const body = JSON.parse(event.body);
 
   const userDetails = {
@@ -15,7 +16,7 @@ export async function handler(event) {
     sourceIp: event.requestContext.identity.sourceIp,
     timestamp: new Date().toISOString(),
     userAgent: event.requestContext.identity.userAgent,
-    appId: event.requestContext.identity.cognitoIdentityId || 'sso'
+    appId: event.requestContext.identity.cognitoIdentityId
   };
 
   console.log(userDetails);
