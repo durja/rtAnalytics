@@ -6,7 +6,7 @@ rtAnalytics is a 100% Serverless event-driven real time user analytics service b
 
 ### Usecases: 
 
-rtAnalytics showcases how AWS services can be used to stream, analyze large quantities of data in real time similar to services like Google Analytics, Mixpanel, etc. 
+rtAnalytics showcases how AWS services can be used to stream, process millions of requests in real time similar to services like Google Analytics, Mixpanel, etc. 
 
 This project can be extended for the following use cases at an enterprise level. 
 
