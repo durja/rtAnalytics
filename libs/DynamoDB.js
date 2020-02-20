@@ -7,8 +7,3 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 export async function call(method, params) {
   return docClient[method](params).promise();
 }
-
-
-export async function isItemAvailable(params) {
-  docClient.query(params).promise();
-}

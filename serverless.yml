@@ -192,10 +192,10 @@ functions:
           batchWindow: 300
           batchSize: 3
   
-  getUserProfile:
-    handler: ./services/userprofile/get.handler
-    events:
-      - http:
-          method: get
-          path: users/{id}
-          cors: true
+  # getUserProfile:
+  #   handler: ./services/userprofile/get.handler
+  #   events:
+  #     - http:
+  #         method: get
+  #         path: users/{id}
+  #         cors: true
