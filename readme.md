@@ -24,6 +24,7 @@ https://user-images.githubusercontent.com/32744604/74901662-82421480-5371-11ea-9
 * Cognito - Authentication provider
 * API Gateway endpoints
 * Lambda
+* S3
 * Kinesis Streams
 * Kinesis Firehose
 * Glue Crawler
