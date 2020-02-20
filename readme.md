@@ -1,7 +1,5 @@
 # Serverless Real-time analytics  
 
----------------
-
 rtAnalytics is a 100% Serverless event-driven real time user analytics service built using AWS services. 
 
 ### Usecases: 
