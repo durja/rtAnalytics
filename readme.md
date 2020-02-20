@@ -32,10 +32,6 @@ https://user-images.githubusercontent.com/32744604/74901662-82421480-5371-11ea-9
 ### Operational Services: 
 * Cloudwatch
 * X-Ray
-
-### Developer Services: 
-* Code pipeline
-* Code build
   
 ### Resources created using cloud formation templates:
 
