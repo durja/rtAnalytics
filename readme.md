@@ -23,24 +23,11 @@ https://user-images.githubusercontent.com/32744604/74901662-82421480-5371-11ea-9
 
 * Cognito - Authentication provider
 * API Gateway endpoints
-  * /engage - POST and AWS_IAM Authorizer
-  * /track - POST and AWS_IAM Authorizer
-
 * Lambda
-  * track - posts site analytics to Analytics kinesis stream 
-  * engage- posts user profile to User Profile kinesis stream 
-  * saveUserProfile- auto triggered based on kinesis events and events are stored to dynamo db. 
-  
 * Kinesis Streams
-  * User Profile Stream
-  * Analytics Stream
 * Kinesis Firehose
-  * Delivers events from analytics kinesis stream to S3 Bucket
 * Glue Crawler
-  * Creates relational table schema from analytics events in S3 bucket
 * Athena
-  * Query on analytics events in S3 bucket. 
-  * Athena queries can be used in conjunction with Quicksight for dashboards, reporting. 
 
 ### Operational Services: 
 * Cloudwatch
