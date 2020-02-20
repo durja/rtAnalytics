@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import aws from 'aws-sdk';
 import AWSXRay from 'aws-xray-sdk';
-import { success, failure } from '../../response';
+import { success, failure } from '../../libs/response';
 
 const AWS = AWSXRay.captureAWS(aws);
 
