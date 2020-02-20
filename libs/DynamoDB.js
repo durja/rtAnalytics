@@ -1,5 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import AWS from 'aws-sdk';
+import aws from 'aws-sdk';
+import AWSXRay from 'aws-xray-sdk';
+
+const AWS = AWSXRay.captureAWS(aws);
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 

@@ -15,6 +15,9 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: us-east-1
+  tracing:
+    apiGateway: true
+    lambda: true
   environment:
     analyticsStream: ${self:service}-analyticsevents-${self:custom.stage}
     analyticsBucket: ${self:service}-analyticsevents-${self:custom.stage}
@@ -40,6 +43,12 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - !GetAtt DynamoDB.Arn
+    - Effect: Allow
+      Action: 
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: '*'
+
  
 custom:
   stage: ${opt:stage, self:provider.stage}    

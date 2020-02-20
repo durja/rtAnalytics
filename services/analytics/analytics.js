@@ -1,6 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import AWS from 'aws-sdk';
+import aws from 'aws-sdk';
+import AWSXRay from 'aws-xray-sdk';
 import { success, failure } from '../../response';
+
+const AWS = AWSXRay.captureAWS(aws);
 
 const kinesis = new AWS.Kinesis({ apiVersion: '2013-12-02' });
 
