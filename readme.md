@@ -8,9 +8,9 @@ rtAnalytics showcases how AWS services can be used to stream, process millions o
 
 This project can be extended for the following use cases at an enterprise level. 
 
-* Application user analytics within enterprise
-* Process real-time data powering enterprise dashboards
-* Fraud analysis based on the user metrics in conjunction with Machine learning services on AWS
+* Fraud detection based on the user metrics in conjunction with AWS ML services
+* Analytics within an enterprise- users, site, operational, etc
+* Real-time enterprise dashboards showing current data
 * Any other use cases, where there is large amounts of data that needs to be processed in real time. 
 
 ## Application Flow 
